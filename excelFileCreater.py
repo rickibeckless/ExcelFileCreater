@@ -3,19 +3,31 @@ import random, string
 import os
 
 def check_location(forbiddenDirChars): 
-    directory_path = input("Enter location 70: ")
+    is_valid_path = False
+    fileLocation = ""
 
-    if not os.path.exists(directory_path):
-        makeDirConfirmation = input(f"The path `{directory_path}` does not exist, do you want to create it? [y/n]: ").lower()
+    while not is_valid_path:
+        directory_path = input("Enter directory location: ")
 
-        if makeDirConfirmation in ("yes", "y"):
-            fileLocation = get_valid_char(forbiddenDirChars, "directory_sequence")
-            os.makedirs(fileLocation)
-            print(f"Directory created: {fileLocation}")
+        if any(char in directory_path for char in forbiddenDirChars):
+            forbidden_in_directory = [char for char in directory_path if char in forbiddenDirChars]
+            print(f"Forbidden characters used: {', '.join(forbidden_in_directory)}")
+            print("Choose another directory location.")
+        else:
+            if not os.path.exists(directory_path):
+                makeDirConfirmation = input(f"The path `{directory_path}` does not exist, do you want to create it? [y/n]: ").lower()
 
-        return fileLocation
-    else: fileLocation = directory_path
-
+                if makeDirConfirmation in ("yes", "y"):
+                    os.makedirs(directory_path)
+                    print(f"Directory created: {directory_path}")
+                    fileLocation = directory_path
+                    is_valid_path = True
+                else: 
+                    print("Please enter a valid existing directory.")
+            else:
+                fileLocation = directory_path
+                is_valid_path = True
+    
     return fileLocation
 
 def get_valid_char(forbiddenChars, sequence):
@@ -43,19 +55,6 @@ def get_valid_char(forbiddenChars, sequence):
             else: is_valid_char = True
 
         return addSeparator
-    elif sequence == "directory_sequence":
-        while not is_valid_char:
-            fileLocation = input("Enter location: ")
-
-            if any(char in forbiddenChars for char in fileLocation):
-                forbidden_in_directory = [char for char in fileLocation if char in forbiddenChars]
-                print(f"Forbidden characters used: {', '.join(forbidden_in_directory)}")
-                print("Choose another folder location.")
-            else: is_valid_char = True
-
-        return fileLocation
-    else:
-        return
 
 wb = Workbook()
 ws = wb.active
@@ -64,6 +63,7 @@ defaultFileLocation = (os.getcwd())
 definedFileLocation = input(f"Default file placement: {defaultFileLocation} \nPlace elsewhere? [y/n]: ")
 
 forbiddenDirChars = [".", ">", "<", "*", "?", "!", "|", " ", '"', ":" "\\0"]
+forbiddenChars = ["/", "\\", ".", ">", "<", "*", "?", "!", "|", " ", '"', ":" "\\0"]
 
 if definedFileLocation in ("yes", "y"):
     fileLocation = check_location(forbiddenDirChars)
@@ -71,8 +71,6 @@ else: fileLocation = defaultFileLocation
 
 fileAmount = int(input("Number of files: "))
 isCustomFileName = input("Custom File Name? [y/n]: ").lower()
-
-forbiddenChars = ["/", "\\", ".", ">", "<", "*", "?", "!", "|", " ", '"', ":" "\\0"]
 
 if isCustomFileName in ("yes", "y"):
     commonFileName = get_valid_char(forbiddenChars, "file_sequence")
