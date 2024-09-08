@@ -2,6 +2,22 @@ from openpyxl import Workbook
 import random, string
 import os
 
+def check_location(forbiddenDirChars): 
+    directory_path = input("Enter location 70: ")
+
+    if not os.path.exists(directory_path):
+        makeDirConfirmation = input(f"The path `{directory_path}` does not exist, do you want to create it? [y/n]: ").lower()
+
+        if makeDirConfirmation in ("yes", "y"):
+            fileLocation = get_valid_char(forbiddenDirChars, "directory_sequence")
+            os.makedirs(fileLocation)
+            print(f"Directory created: {fileLocation}")
+
+        return fileLocation
+    else: fileLocation = directory_path
+
+    return fileLocation
+
 def get_valid_char(forbiddenChars, sequence):
     is_valid_char = False
 
@@ -27,6 +43,17 @@ def get_valid_char(forbiddenChars, sequence):
             else: is_valid_char = True
 
         return addSeparator
+    elif sequence == "directory_sequence":
+        while not is_valid_char:
+            fileLocation = input("Enter location: ")
+
+            if any(char in forbiddenChars for char in fileLocation):
+                forbidden_in_directory = [char for char in fileLocation if char in forbiddenChars]
+                print(f"Forbidden characters used: {', '.join(forbidden_in_directory)}")
+                print("Choose another folder location.")
+            else: is_valid_char = True
+
+        return fileLocation
     else:
         return
 
@@ -36,8 +63,10 @@ ws = wb.active
 defaultFileLocation = (os.getcwd())
 definedFileLocation = input(f"Default file placement: {defaultFileLocation} \nPlace elsewhere? [y/n]: ")
 
+forbiddenDirChars = [".", ">", "<", "*", "?", "!", "|", " ", '"', ":" "\\0"]
+
 if definedFileLocation in ("yes", "y"):
-    fileLocation = input("Enter location: ")
+    fileLocation = check_location(forbiddenDirChars)
 else: fileLocation = defaultFileLocation
 
 fileAmount = int(input("Number of files: "))
