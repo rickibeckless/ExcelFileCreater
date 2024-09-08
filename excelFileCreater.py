@@ -62,7 +62,7 @@ ws = wb.active
 defaultFileLocation = (os.getcwd())
 definedFileLocation = input(f"Default file placement: {defaultFileLocation} \nPlace elsewhere? [y/n]: ")
 
-forbiddenDirChars = [".", ">", "<", "*", "?", "!", "|", " ", '"', ":" "\\0"]
+forbiddenDirChars = [">", "<", "*", "?", "!", "|", '"', ":" "\\0"]
 forbiddenChars = ["/", "\\", ".", ">", "<", "*", "?", "!", "|", " ", '"', ":" "\\0"]
 
 if definedFileLocation in ("yes", "y"):
